@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+.venv/
+venv/
+*.log
+.DS_Store
+evaluation/raw_results.json
+evaluation/summary.json
+*.pyc
+dist/
+build/
+node_modules/
+.modal/
