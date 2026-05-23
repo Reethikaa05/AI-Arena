@@ -6,8 +6,6 @@
 
 ## 🏗️ Architecture
 
-![Architecture Diagram](file:///C:/Users/Dell/.gemini/antigravity/brain/7ee5cc37-28c3-48ec-9aa1-7fe3fd7f984c/architecture_diagram_1779559120951.png)
-
 *Diagram: A modern, glass‑morphic representation of the system components and data flow.*
 
 - **FastAPI backend** – Serves a dark‑mode UI and orchestrates API calls.
@@ -35,19 +33,19 @@ ai-assistant-eval/
 
 ### Screenshots
 
-![AI Arena UI Screenshot 1](file:///C:/Users/Dell/Downloads/ai-assistant-eval/ai-assistant-eval/screenshot/Screenshot_23-5-2026_231842_.jpeg)
+![AI Arena UI Screenshot 1](https://raw.githubusercontent.com/Reethikaa05/AI-Arena/main/screenshot/Screenshot_23-5-2026_231842_.jpeg)
 
 *Premium dark‑mode UI showing side‑by‑side model comparison with glass‑morphic cards.*
 
-![AI Arena UI Screenshot 2](file:///C:/Users/Dell/Downloads/ai-assistant-eval/ai-assistant-eval/screenshot/Screenshot_23-5-2026_231929_.jpeg)
+![AI Arena UI Screenshot 2](https://raw.githubusercontent.com/Reethikaa05/AI-Arena/main/screenshot/Screenshot_23-5-2026_231929_.jpeg)
 
 *Another view of the comparison UI with detailed model responses.*
 
-![AI Arena UI Screenshot 3](file:///C:/Users/Dell/Downloads/ai-assistant-eval/ai-assistant-eval/screenshot/Screenshot_23-5-2026_23192_.jpeg)
+![AI Arena UI Screenshot 3](https://raw.githubusercontent.com/Reethikaa05/AI-Arena/main/screenshot/Screenshot_23-5-2026_23192_.jpeg)
 
 *UI showing the evaluation results and metrics dashboard.*
 
-![AI Arena UI Screenshot 4](file:///C:/Users/Dell/Downloads/ai-assistant-eval/ai-assistant-eval/screenshot/Screenshot_23-5-2026_232017_.jpeg)
+![AI Arena UI Screenshot 4](https://raw.githubusercontent.com/Reethikaa05/AI-Arena/main/screenshot/Screenshot_23-5-2026_232017_.jpeg)
 
 *Final view of the application’s dark‑mode landing page with navigation bar.*
 
