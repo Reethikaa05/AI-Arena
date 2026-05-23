@@ -6,8 +6,49 @@
 
 ## 🏗️ Architecture
 
-*Diagram: A modern, glass‑morphic representation of the system components and data flow.*
+```mermaid
+graph TB
+    subgraph Frontend["🎨 Frontend"]
+        UI["Static Web UI<br/>HTML/CSS/JS<br/>Glassmorphism Design"]
+    end
+    
+    subgraph Backend["⚙️ Backend"]
+        FastAPI["FastAPI Server<br/>REST API<br/>WebSocket Support"]
+    end
+    
+    subgraph Assistants["🤖 LLM Assistants"]
+        OSS["OSS Assistant<br/>Qwen2.5-72B<br/>via HuggingFace"]
+        Frontier["Frontier Assistant<br/>Claude Sonnet<br/>via Anthropic"]
+    end
+    
+    subgraph APIs["🔗 External APIs"]
+        HF["HuggingFace<br/>Inference API"]
+        Anthropic["Anthropic<br/>API"]
+    end
+    
+    subgraph Evaluation["📊 Evaluation Suite"]
+        RuleBase["Rule-Based<br/>Evaluation"]
+        LLMJudge["LLM-as-Judge<br/>Claude Evaluator"]
+        Results["Results<br/>JSON"]
+    end
+    
+    UI -->|HTTP/WS| FastAPI
+    FastAPI -->|query| OSS
+    FastAPI -->|query| Frontier
+    OSS -->|API Call| HF
+    Frontier -->|API Call| Anthropic
+    FastAPI -->|send responses| Evaluation
+    RuleBase -->|scores| Results
+    LLMJudge -->|scores| Results
 
+    style Frontend fill:#667eea,stroke:#764ba2,color:#fff
+    style Backend fill:#f093fb,stroke:#4facfe,color:#fff
+    style Assistants fill:#43e97b,stroke:#38f9d7,color:#fff
+    style APIs fill:#fa709a,stroke:#fee140,color:#fff
+    style Evaluation fill:#a8edea,stroke:#fed6e3,color:#000
+```
+
+**Key Components:**
 - **FastAPI backend** – Serves a dark‑mode UI and orchestrates API calls.
 - **Static front‑end** – Vanilla HTML/CSS/JS with glassmorphism styling.
 - **OSS Assistant** – Connects to HuggingFace Inference API (Qwen2.5‑72B).
