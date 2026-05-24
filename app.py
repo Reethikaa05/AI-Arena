@@ -39,7 +39,7 @@ app = FastAPI(title="AI Assistant Evaluation Platform", version="1.0.0")
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from models import Base, User, Message
-engine = create_engine("sqlite:///data/app.db", connect_args={"check_same_thread": False})
+engine = create_engine(f"sqlite:///{(Path('/tmp/app.db') if os.getenv('VERCEL') else Path(__file__).parent / 'data' / 'app.db')}", connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def get_db():
