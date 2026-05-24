@@ -30,8 +30,9 @@ except ImportError:
     import uvicorn
 
 
-from oss_assistant.assistant import OSSAssistant
-from frontier_assistant.assistant import FrontierAssistant
+    from oss_assistant.assistant import OSSAssistant
+    from init_db import init_db
+    from frontier_assistant.assistant import FrontierAssistant
 
 app = FastAPI(title="AI Assistant Evaluation Platform", version="1.0.0")
 
