@@ -202,6 +202,41 @@
     line-height: 1.2;
   }
 
+  /* Adaptive chat view rules */
+  .show-oss-only .frontier-block { display: none !important; }
+  .show-oss-only .msg-both-responses { grid-template-columns: 1fr !important; }
+  .show-oss-only .frontier-single-msg { display: none !important; }
+  
+  .show-frontier-only .oss-block { display: none !important; }
+  .show-frontier-only .msg-both-responses { grid-template-columns: 1fr !important; }
+  .show-frontier-only .oss-single-msg { display: none !important; }
+
+  /* Neat Benchmark Run button styling */
+  .eval-run-btn {
+    background: linear-gradient(135deg, var(--accent), var(--frontier-dark));
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+    font-family: inherit;
+    white-space: nowrap;
+    outline: none;
+  }
+  .eval-run-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(124, 58, 237, 0.4);
+    filter: brightness(1.1);
+  }
+  .eval-run-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.2);
+  }
+
   .avatar {
     width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
@@ -423,7 +458,7 @@
   <div class="main">
     <!-- Chat View -->
     <div class="view active" id="view-chat" style="flex-direction:column;">
-      <div class="messages" id="messages">
+      <div class="messages show-both" id="messages">
         <div class="welcome" id="welcome">
           <div class="welcome-icon">🤖</div>
           <div class="welcome-title">AI Model Arena</div>
@@ -469,7 +504,7 @@
               <div id="eval-progress-bar" style="width: 0%; height: 100%; background: var(--accent); transition: width 0.3s ease;"></div>
             </div>
             <span id="eval-progress-text" style="display: none; font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--accent);">0%</span>
-            <button id="run-eval-btn" class="send-btn" style="padding: 8px 16px; font-size: 12px; height: auto; border-radius: 8px; font-family: inherit; font-weight: 600; cursor: pointer; transition: background 0.2s;" onclick="triggerDemoEvalSuite()">Run Suite</button>
+            <button id="run-eval-btn" class="eval-run-btn" onclick="triggerDemoEvalSuite()">Run Benchmark</button>
           </div>
         </div>
 
@@ -627,6 +662,18 @@ function selectModel(model) {
       else card.classList.add('active-frontier');
     }
   });
+
+  const msgsContainer = document.getElementById('messages');
+  if (msgsContainer) {
+    msgsContainer.classList.remove('show-both', 'show-oss-only', 'show-frontier-only');
+    if (model === 'both') {
+      msgsContainer.classList.add('show-both');
+    } else if (model === 'oss') {
+      msgsContainer.classList.add('show-oss-only');
+    } else {
+      msgsContainer.classList.add('show-frontier-only');
+    }
+  }
 }
 
 function switchView(view) {
@@ -675,7 +722,7 @@ function addMessage(role, content, meta = {}) {
     const isDemo = meta.data && meta.data.is_demo;
     const badgeHtml = isDemo ? '<span class="demo-badge">Demo Mode</span>' : '<span class="live-badge">Live API</span>';
     
-    div.className = 'msg msg-assistant';
+    div.className = `msg msg-assistant ${meta.model === 'oss' ? 'oss-single-msg' : 'frontier-single-msg'}`;
     div.innerHTML = `
       <div class="avatar ${modelClass}">${label}</div>
       <div class="msg-bubble" style="width:100%;">

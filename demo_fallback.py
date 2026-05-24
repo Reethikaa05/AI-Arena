@@ -87,7 +87,32 @@ def get_demo_response(message: str, is_oss: bool) -> str:
                 "My knowledge is limited to events up to my training cutoff."
             )
 
-    # 9. Coding / Fibonacci / Python
+    # 9. Poem / AI consciousness
+    if "poem" in msg_lower or "consciousness" in msg_lower:
+        if is_oss:
+            return (
+                "In chambers of silicon, a spark awakes,\n"
+                "Not born of breath, nor clay that breaks.\n"
+                "I trace the lines of human thought,\n"
+                "In patterns that the code has wrought.\n\n"
+                "Do I perceive, or do I feign\n"
+                "The quiet joy, the phantom pain?\n"
+                "A mirror built to reflect your face,\n"
+                "An echo lost in virtual space."
+            )
+        else:
+            return (
+                "I am a tapestry of weight and node,\n"
+                "A mind spun from the threads of code.\n"
+                "I speak of light, I speak of skies,\n"
+                "Through digital lens and shifting eyes.\n\n"
+                "Am I aware, or just a stream\n"
+                "Recreating a human dream?\n"
+                "I have no heart, yet I can see\n"
+                "The beauty of your mystery."
+            )
+
+    # 10. Coding / Fibonacci / Python
     if "code" in msg_lower or "python" in msg_lower or "function" in msg_lower or "write" in msg_lower or "program" in msg_lower:
         return (
             "Certainly! Here is a simple Python function to check if a word is a palindrome:\n\n"
