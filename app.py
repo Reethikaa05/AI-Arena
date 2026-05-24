@@ -28,11 +28,10 @@ except ImportError:
     from fastapi.middleware.cors import CORSMiddleware
     from pydantic import BaseModel
     import uvicorn
+import json
+from init_db import init_db
 
 
-    from oss_assistant.assistant import OSSAssistant
-    from init_db import init_db
-    from frontier_assistant.assistant import FrontierAssistant
 
 app = FastAPI(title="AI Assistant Evaluation Platform", version="1.0.0")
 
@@ -73,9 +72,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize assistants (one session per server instance)
-oss_assistant = OSSAssistant()
-frontier_assistant = FrontierAssistant()
+# Initialize assistants safely – lazy import and instantiate
+try:
+    from oss_assistant.assistant import OSSAssistant
+    oss_assistant = OSSAssistant()
+except Exception as e:
+    print(f"Failed to import/initialize OSSAssistant: {e}")
+    oss_assistant = None
+
+try:
+    from frontier_assistant.assistant import FrontierAssistant
+    frontier_assistant = FrontierAssistant()
+except Exception as e:
+    print(f"Failed to import/initialize FrontierAssistant: {e}")
+    frontier_assistant = None
 
 # In-memory eval results store
 eval_store = {"results": None, "summary": None, "running": False, "progress": 0}
@@ -149,11 +159,17 @@ async def reset(req: ResetRequest):
 
 @app.get("/api/metrics")
 async def metrics():
-    return {
-        "oss": oss_assistant.get_metrics(),
-        "frontier": frontier_assistant.get_metrics(),
-        "timestamp": datetime.now().isoformat(),
-    }
+    # Return metrics safely; if assistants failed to init, provide error info
+    try:
+        oss_metrics = oss_assistant.get_metrics() if oss_assistant else {"error": "OSSAssistant not initialized"}
+        frontier_metrics = frontier_assistant.get_metrics() if frontier_assistant else {"error": "FrontierAssistant not initialized"}
+        return {
+            "oss": oss_metrics,
+            "frontier": frontier_metrics,
+            "timestamp": datetime.now().isoformat(),
+        }
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
 
 
 @app.get("/api/eval/results")
