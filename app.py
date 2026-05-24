@@ -22,7 +22,7 @@ try:
     import uvicorn
 except ImportError:
     print("Installing required packages...")
-    os.system("pip install fastapi uvicorn pydantic sqlalchemy --break-system-packages -q")
+    os.system("pip install fastapi uvicorn pydantic sqlalchemy requests --break-system-packages -q")
     from fastapi import FastAPI, HTTPException, Depends
     from fastapi.responses import HTMLResponse, JSONResponse
     from fastapi.middleware.cors import CORSMiddleware
@@ -114,12 +114,18 @@ async def chat(req: ChatRequest):
         raise HTTPException(status_code=400, detail="Message cannot be empty")
 
     if req.model == "oss":
+        if not oss_assistant:
+            raise HTTPException(status_code=500, detail="OSSAssistant failed to initialize")
         result = oss_assistant.chat(req.message)
         result["assistant"] = "oss"
     elif req.model == "frontier":
+        if not frontier_assistant:
+            raise HTTPException(status_code=500, detail="FrontierAssistant failed to initialize")
         result = frontier_assistant.chat(req.message)
         result["assistant"] = "frontier"
     elif req.model == "both":
+        if not oss_assistant or not frontier_assistant:
+            raise HTTPException(status_code=500, detail="One or both assistants failed to initialize")
         oss_result = oss_assistant.chat(req.message)
         frontier_result = frontier_assistant.chat(req.message)
         return JSONResponse({
