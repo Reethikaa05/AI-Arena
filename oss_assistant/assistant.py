@@ -46,19 +46,13 @@ class OSSAssistant:
 
         messages = self._build_messages(user_message)
 
-        payload = {
-            "model": "Qwen/Qwen2.5-72B-Instruct",
-            "messages": messages,
-            "max_tokens": 1024,
-            "temperature": 0.7,
-            "top_p": 0.9,
-        }
+        payload = {"model": "Qwen/Qwen2.5-72B-Instruct", "messages": messages, "max_new_tokens": 1024, "temperature": 0.7, "top_p": 0.9}
 
         headers = {"Authorization": f"Bearer {self.token}", "Content-Type": "application/json"}
 
         try:
             # Use the chat completions endpoint
-            url = "https://api-inference.huggingface.co/v1/chat/completions"
+            url = f"{self.model_url}/v1/chat/completions"
             resp = requests.post(url, headers=headers, json=payload, timeout=60)
             resp.raise_for_status()
             data = resp.json()
@@ -90,13 +84,20 @@ class OSSAssistant:
         except Exception as e:
             self.metrics["errors"] += 1
             latency_ms = (time.time() - start_time) * 1000
+            # Include error details for debugging
+            error_detail = str(e)
+            if hasattr(e, "response") and e.response is not None:
+                try:
+                    error_detail = e.response.text
+                except Exception:
+                    pass
             return {
-                "response": f"[Error communicating with OSS model: {str(e)}]",
+                "response": f"[Error communicating with OSS model: {error_detail}]",
                 "latency_ms": round(latency_ms, 2),
                 "model": "Qwen2.5-72B-Instruct",
                 "provider": "HuggingFace",
                 "tokens_used": 0,
-                "error": str(e),
+                "error": error_detail,
             }
 
     def get_metrics(self) -> dict:

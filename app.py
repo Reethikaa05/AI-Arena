@@ -14,7 +14,7 @@ from datetime import datetime
 sys.path.insert(0, str(Path(__file__).parent))
 
 try:
-    from fastapi import FastAPI, HTTPException
+    from fastapi import FastAPI, HTTPException, Depends
     from fastapi.staticfiles import StaticFiles
     from fastapi.responses import HTMLResponse, JSONResponse
     from fastapi.middleware.cors import CORSMiddleware
@@ -22,17 +22,42 @@ try:
     import uvicorn
 except ImportError:
     print("Installing required packages...")
-    os.system("pip install fastapi uvicorn pydantic --break-system-packages -q")
-    from fastapi import FastAPI, HTTPException
+    os.system("pip install fastapi uvicorn pydantic sqlalchemy --break-system-packages -q")
+    from fastapi import FastAPI, HTTPException, Depends
     from fastapi.responses import HTMLResponse, JSONResponse
     from fastapi.middleware.cors import CORSMiddleware
     from pydantic import BaseModel
     import uvicorn
 
+
 from oss_assistant.assistant import OSSAssistant
 from frontier_assistant.assistant import FrontierAssistant
 
 app = FastAPI(title="AI Assistant Evaluation Platform", version="1.0.0")
+
+# Database setup
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, Session
+from models import Base, User, Message
+engine = create_engine("sqlite:///data/app.db", connect_args={"check_same_thread": False})
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+@app.on_event("startup")
+def startup_event():
+    Base.metadata.create_all(bind=engine)
+    # Initialize DB with seed data if DB does not exist
+    from init_db import init_db
+    db_path = Path(__file__).parent / "data" / "app.db"
+    seed_path = Path(__file__).parent / "data" / "seed.sql"
+    if not db_path.exists():
+        init_db(db_path, seed_path)
 
 app.add_middleware(
     CORSMiddleware,
@@ -89,6 +114,22 @@ async def chat(req: ChatRequest):
         raise HTTPException(status_code=400, detail="model must be 'oss', 'frontier', or 'both'")
 
     return JSONResponse(result)
+
+class MessageCreate(BaseModel):
+    user_id: int
+    content: str
+
+@app.get("/api/users")
+def get_users(db: Session = Depends(get_db)):
+    return db.query(User).all()
+
+@app.post("/api/messages")
+def create_message(msg: MessageCreate, db: Session = Depends(get_db)):
+    db_msg = Message(user_id=msg.user_id, content=msg.content)
+    db.add(db_msg)
+    db.commit()
+    db.refresh(db_msg)
+    return db_msg
 
 
 @app.post("/api/reset")
