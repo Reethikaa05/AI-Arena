@@ -52,12 +52,17 @@ def get_db():
 @app.on_event("startup")
 def startup_event():
     Base.metadata.create_all(bind=engine)
+    # Determine appropriate DB path based on environment
+    if os.getenv('VERCEL'):
+        db_path = Path('/tmp') / 'app.db'
+        seed_path = Path(__file__).parent / 'data' / 'seed.sql'
+    else:
+        db_path = Path(__file__).parent / 'data' / 'app.db'
+        seed_path = Path(__file__).parent / 'data' / 'seed.sql'
     # Initialize DB with seed data if DB does not exist
-    from init_db import init_db
-    db_path = Path(__file__).parent / "data" / "app.db"
-    seed_path = Path(__file__).parent / "data" / "seed.sql"
     if not db_path.exists():
         init_db(db_path, seed_path)
+
 
 app.add_middleware(
     CORSMiddleware,
