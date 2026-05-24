@@ -97,6 +97,7 @@ class FrontierAssistant:
                 "input_tokens": usage.get("input_tokens", 0),
                 "output_tokens": usage.get("output_tokens", 0),
                 "error": None,
+                "is_demo": False,
             }
 
         except Exception as e:
@@ -117,6 +118,7 @@ class FrontierAssistant:
                 "input_tokens": len(user_message.split()),
                 "output_tokens": len(demo_message.split()),
                 "error": None,
+                "is_demo": True,
             }
 
     def get_metrics(self) -> dict:

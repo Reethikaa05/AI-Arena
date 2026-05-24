@@ -81,6 +81,7 @@ class OSSAssistant:
                 "provider": "HuggingFace",
                 "tokens_used": data.get("usage", {}).get("total_tokens", 0),
                 "error": None,
+                "is_demo": False,
             }
         except Exception as e:
             self.metrics["errors"] += 1
@@ -97,6 +98,7 @@ class OSSAssistant:
                 "provider": "HuggingFace",
                 "tokens_used": len(user_message.split()) * 2 + 50,
                 "error": None,
+                "is_demo": True,
             }
 
     def get_metrics(self) -> dict:
